@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>dead kitty hangman ฅ (ⓛ ω ⓛ) ฅ </title>
+    <meta charset="utf-8">
+    <script>        // This code was written by Thomas F. of Programming. No engines were used, this is purely hand-coded.
+        var words = ["calcium oxide", "adam sandler", "death squad", "explosive", "cherry bomb", "schooly d", "plundephonics", "suffering", "sound collage", "existentialism", "john doe", "heterochromia", "power tools", "breakcore", "script", "psychedelic", "saxophone", "dracula", "lucifer", "custody battle", "divorce", "floaties", "legit medical business", "cyanide", "rob zombie", "antiques", "matsushita", "rca technologies", "thinkpad", "meatwad no", "cat", "fred durst", "weezer", "clean bathroom", "neon genesis evangelion", "illegal animal hunting", "dog", "biggie smalls", "free healthcare", "canada", "barack obama", "connecticut public television", "the military", "subliminal advertising", "thomas hates mcdonalds", "hippopotomonstrosesquippedaliophobia", "joe biden hotdog", "the gerigerogegege", "rivers cuomo", "father", "evil blood sacrifice", "screaming bloody murder", "row", "vertigo"];
+
+        // ^ Just a bunch of dumb terms I thought, mostly either references to things I like or stuff only internet stoners or I would find funny. Special thanks to S and J for giving me some term ideas.
+
+        function allLoaded() {
+          document.getElementById("noscriptatall").style.display = "none";
+          document.getElementById("heywarning").style.display = "initial";        
+        }
+
+        // ^ This function is triggered when the <body> loads entirely. this allows me to place all the assets in a hidden <div> and basically make like a preloader. simply, this "replaces" the loading/noscript screen with the initial warning screen by hiding the previous screen (which is a <div>) using the CSS display property. If the user had disabled all Javascript, this code would've not loaded at all, leaving them with only the loading/noscript screen.
+
+        function titlescr() {
+          window.titleScreen = document.getElementById("titlescreen");
+
+          // ^ I only did this once with the titlescreen Id because this method only seems to work whenever it wants. Also notice the usage of "window." instead of "var ". This allows variables to be used globally, outside of functions. This is something I use a lot throughout this code.
+
+          document.getElementById("heywarning").style.display = "none";
+          titleScreen.style.display = "initial";
+
+          // ^ Once again, "replaces" one screen with the other.
+
+          titleScreen.style.opacity = 0;
+          document.getElementById("canvas").style.backgroundColor = "black";
+
+          // ^ The "canvas'" background-color is initially dark red for the loading/warning. This one changes it to black to make it fit in with the visuals. Also opacity is set to 0 (invisible) for it to prepare for the fading animation.
+
+          titleScreen.style.animationName = "fadeIn";
+
+          // ^ This sets the "titlescreen" Id to use the "fadeIn" animation, which is defined in the <style> tag and uses the opacity property to allow for a fading transition.
+          
+          titleScreen.style.animationDuration = "0.6s";
+          titleScreen.style.animationTimingFunction = "linear";
+          titleScreen.style.animationIterationCount = 1;
+          titleScreen.style.animationFillMode = "forwards";
+
+          titleScreen.style.animationPlayState = "running"; // this makes the animation play.
+        }
+
+		    function start() {
+          titleScreen.style.animationName = "fadeOut";
+          titleScreen.style.animationPlayState = "running";
+
+          // ^ Same thing but with a fading out transition.
+
+          // document.getElementById("holyMoly").usemap = "";
+          
+          // ^ Meant to fix a bug that makes the game freak out when you clicked the Play button (in an imagemap). It didn't really do anything and I couldn't figure out another way to fix it. Feel free to deduct some points :(
+
+          window.fadedeeznuts = setInterval(startfr, 600);
+
+          // ^ Best way to allow for a delay. As far as I'm aware, there is no "wait()" function, so I just use this. What sucks is that I have to segregate it to another function and that it constantly loops. This line in specific is meant to allow for the fade-out transition to play.
+		    }
+
+        function startfr() {
+          document.getElementById("titlescreen").style.display = "none";
+          document.getElementById("game").style.display = "initial";
+          // console.log("aass");
+
+          clearInterval(fadedeeznuts);
+
+          // ^ God I hate clearInterval. I have to use "clearInterval" in a function if I don't want it to loop forever with a delay.
+
+          keyboardGenerate(); // Nope, the keyboard isn't manual HTML work. Just sounds like too much work.
+          reset();
+        }
+		      
+        function keyboardGenerate() {
+          var keyboardkeys = "qwertyuiopasdfghjklzxcvbnm"; 
+          var keyboardarray = keyboardkeys.split("");
+          var iaminshambles = 0;
+
+          // ^ Adds the QWERTY layout keyboard's order into a variable and splits each letter into an array. The "iaminshambles" variable is there to keep the next code in line, it's there so it can cover every key.
+
+          for (var uqq = 0; uqq < 3; uqq++) { // One iteration of this makes for one row of keys.
+            for (var ohmygoood = 0; ohmygoood < 10; ohmygoood++) {
+
+              // ^ I use "iaminshambles" instead of this because it just loops through 0-10. Again, "iaminshambles" was made to help generate the whole keyboard.
+
+              if (iaminshambles < keyboardarray.length) { // This is so we don't get any additional unecessary keys in the last row
+                document.getElementById("keyboard").innerHTML += '<button id="keyButtonN' + iaminshambles +
+                '" onclick="nowguess(' + "'" + keyboardarray[iaminshambles] + "'" + ')" style="background-image: url(./letters/' + keyboardarray[iaminshambles] + '.gif);"> </button>';
+                iaminshambles++;
+
+                // ^ Create a button for each key with the help of the "keyboardarray" and "iaminshambles" variable. Each button executes the "nowguess()" function and sends a variable that depends on which key they pressed, that will be what letter the player guessed. Also sets the background-image to a correspondant animated letter asset.
+
+              }
+            }
+            document.getElementById("keyboard").innerHTML += "<br>"; // Separates rows.
+          }
+        }
+
+        function reset() {
+         document.getElementById("theLetterz").innerHTML = "";
+         document.getElementById("theNoose").src ="./hang/6.gif"; 
+         document.getElementById("myLetterz").innerHTML = "";
+         document.getElementById("uhhyeahthis").style.display = "none";
+         document.getElementById("winrar").style.display = "none";
+         document.getElementById("loserar").style.display = "none";
+
+         // ^ Resets everything so the game can be restarted with a button.
+
+          window.goalWord = words[Math.floor(Math.random() * words.length)]; // Pick a random word from the word pool.
+          // console.log(goalWord);
+          window.goalWordArray = goalWord.split(""); // Split current correct word into an array.
+          // console.log(goalWordArray);
+          window.showittotheplayer = []; // Set up the player guess array.
+
+          for (var z = 0; z < goalWord.length; z++) {
+            if (goalWord[z] == " ") {
+              console.log('theres a space here');
+              showittotheplayer.push(" ");
+              document.getElementById("theLetterz").innerHTML += '<br>';
+            } else {
+              showittotheplayer.push("_");
+              document.getElementById("theLetterz").innerHTML += '<img src="./letters/empty.gif" height=' + Math.floor(250 / goalWordArray.length) + '% id="mynewvisualletter' + z + '">';
+            }
+          }
+
+          // ^ Loops until there are no more letters in the word you will guess. For each iteration, it'll add an _ to the player guess array for each letter in the correct word. Also, the code will sort of automically solve spaces, allowing for support of full phrases. Because of visual concerns, I only used phrases with 3 words at most. Speaking of visuals, this code also adds an image for each letter, starting out as a _ and eventually turning into another letter as the player starts guessing correctly.
+
+          window.lives = 6;
+          // console.log(showittotheplayer);
+          window.otherguesses = []; // Sets up an array for already guessed letters.
+        }
+        
+        function nowguess(playerscurrentguess) {
+
+          // console.log(playerscurrentguess + " (placeholder)") // Thank god I found out about function parameters.
+
+          var isitcorrect = false;
+          var ialreadydidthatsortastuff = false;
+
+          // ^ Setting up booleans for determining if the letter guessed is correct and if the player already guessed a certain letter, respectively.
+
+          for (var apap = 0; apap < otherguesses.length; apap++) {
+            if (playerscurrentguess == otherguesses[apap]) {
+              // console.log("you already used that letter");
+              var ialreadydidthatsortastuff = true;
+              document.getElementById("myLetterz").innerHTML = "Why would you want to pick this one again? You are weird, bud.";
+            }   
+          }
+          
+          // ^ This is to make sure the player won't guess the same letter twice.
+
+          if (ialreadydidthatsortastuff == false) { // If you haven't guessed this letter yet...
+            for (var woah = 0; woah <= goalWordArray.length; woah++) {
+              if (playerscurrentguess == goalWordArray[woah]) {
+              isitcorrect = true;
+              // console.log("alright!!");
+              document.getElementById("mynewvisualletter" + woah).src = "./letters/" + goalWordArray[woah] +".gif";
+              showittotheplayer[woah] = playerscurrentguess;
+              }
+            }
+
+            // ^ ...Check if any of the letters in the player guess array corresponds to letters seen in the correct word. If so, replace empty underscores with the correspondant correct letter and change visuals accordingly...
+          
+            otherguesses.push(playerscurrentguess);
+            document.getElementById("myLetterz").innerHTML = otherguesses.join(", ");
+
+            // ^ (Add to an array of letters the player has already guessed.)
+
+            if (isitcorrect == false) {
+            lives -= 1;
+            document.getElementById("theNoose").src ="./hang/" + lives + ".gif";
+            }
+
+            // ^ ...Otherwise, take one live and update cat noose visuals accordingly.
+
+            checkifitsallcorrect(); // Check if the player has correctly guessed the whole word.
+            if (lives == 0) {
+              ImFinished(false);
+            }
+
+            // ^ If there are no lives left and the cat has been fully hanged, finish game as a lose.
+
+          }
+        }
+
+        function checkifitsallcorrect() {
+          var end = true;
+            for (var Aasdh = 0; Aasdh < goalWordArray.length; Aasdh++) {
+              if (showittotheplayer[Aasdh] == "_") {
+                end = false;
+              }
+            }
+          if (end == true) {
+            ImFinished(true);
+          }
+        }
+
+        // ^ Check each player guess array and determine that the game has finished as a win once there are no empty underscore spots.
+
+        function ImFinished (winner) {
+
+          // ^ This is just a general game end function. The "winner" boolean parameter determines if you've won the game or not.
+
+          if (winner == true) {
+            document.getElementById("winrar").style.display = "initial";
+            document.getElementById("status").style.backgroundColor = "#669a2b";
+          } else {
+            document.getElementById("loserar").style.display = "initial";
+            document.getElementById("status").style.backgroundColor = "red";
+          }
+
+          // ^ Display a message and color the final result box (id:"status") depending on wether or not you have won the current game.
+
+          document.getElementById("thewordwas").innerHTML = goalWord;
+
+          // ^ In the final result box, the correct word is shown, regardless of if you've won the game or not. This simply allows the final correct word to be shown in a <p>.
+
+          document.getElementById("uhhyeahthis").style.display = "grid";
+
+          // ^ Displays the <div> that the final result box is contained in.
+
+          document.getElementById("status").style.animationName = "dang";
+          document.getElementById("status").style.animationDuration = "1s";
+          document.getElementById("status").style.animationTimingFunction = "ease-out";
+          document.getElementById("status").style.animationIterationCount = 1;
+          document.getElementById("status").style.animationFillMode = "forwards";
+
+          document.getElementById("status").style.animationPlayState = "running";
+
+          // ^ Runs a sliding animation whenever the box shows up. 
+        }
+    </script>
+    <style type="text/css">
+        body {
+          background-color: black;
+          color: whitesmoke;
+          text-align: center;
+        }
+
+        #wrapper {
+          height: 97vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        #canvas {
+          width: 650px;
+          height:  400px;
+          background-color: darkred;
+          display: grid;
+          align-content: space-evenly;
+          justify-content: space-evenly;
+        }
+
+        @keyframes fadeIn {
+          from {opacity: 0;}
+          to {opacity: 1;}
+        }
+
+        @keyframes fadeOut {
+          from {opacity: 1;}
+          to {opacity: 0;}
+        }
+
+        #game {
+          width: 650px;
+          height: 400px;
+        }
+
+        #catNoose {
+          width: 152px;
+          height: 175px;
+        }
+
+        #theLetterz {
+          width: 498px;
+          height: 175px;
+        }
+
+        #topRow {
+          display: grid;
+          grid-auto-flow: column;
+          height: 175px;
+        }
+
+        #bottomRow {
+          height: 225px;
+        }
+
+        #lettersUsed {
+          height: 50px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+        }
+
+        #keyboard {
+          height: 175px;
+        }
+
+        #keyboard button {
+          width: 50px;
+          height: 50px;
+          border: white solid 1px;
+          margin: 4px;
+          background-size: 50px;
+        }
+
+        .meow {
+          animation: rotate 5s infinite linear;
+        }
+
+        @keyframes rotate {
+          from {transform: rotate(0deg);}
+          to {transform: rotate(360deg);}
+        }
+
+        @keyframes flash {
+          from {background-color: rgba(255, 255, 255, 1);}
+          to {background-color: rgba(0, 0, 0, 0);}
+        }
+
+        #uhhyeahthis {
+          height: 225px;
+          position: relative;
+          background-color: rgba(0,0,0,0.4);
+          top: -225px;
+          display: grid;
+          align-items: center;
+          justify-items: center;
+        }
+
+        #status {
+          height: 140px;
+          position: relative;
+          display: grid;
+          align-content: space-evenly;
+          justify-items: center;
+          width: 374px;
+          border: white 1px solid;
+          padding: 11px;
+        }
+
+        @keyframes dang {
+          from {transform: translateY(40px);
+                opacity: 0;}
+          to {transform: translateY(0);
+                opacity: 1;}
+        }
+
+        #ughfineiguessyouar {
+          height: 225px;
+          position: relative;
+          top: -400px;
+        }
+    </style>
+  </head>
+  <body onload="allLoaded()">
+    <div id="wrapper">
+      <div id="canvas">
+        <div id="preload" style="display:none;"> <!-- Preload assets -->
+          <img src="./warning.gif">
+          <img src="./title.gif">
+          <img src="./hang/0.gif">
+          <img src="./hang/1.gif">
+          <img src="./hang/2.gif">
+          <img src="./hang/3.gif">
+          <img src="./hang/4.gif">
+          <img src="./hang/5.gif">
+          <img src="./hang/6.gif">
+          <img src="./letters/q.gif">
+          <img src="./letters/w.gif">
+          <img src="./letters/e.gif">
+          <img src="./letters/r.gif">
+          <img src="./letters/t.gif">
+          <img src="./letters/y.gif">
+          <img src="./letters/u.gif">
+          <img src="./letters/i.gif">
+          <img src="./letters/o.gif">
+          <img src="./letters/p.gif">
+          <img src="./letters/a.gif">
+          <img src="./letters/s.gif">
+          <img src="./letters/d.gif">
+          <img src="./letters/f.gif">
+          <img src="./letters/g.gif">
+          <img src="./letters/h.gif">
+          <img src="./letters/j.gif">
+          <img src="./letters/k.gif">
+          <img src="./letters/l.gif">
+          <img src="./letters/z.gif">
+          <img src="./letters/x.gif">
+          <img src="./letters/c.gif">
+          <img src="./letters/v.gif">
+          <img src="./letters/b.gif">
+          <img src="./letters/n.gif">
+          <img src="./letters/m.gif">
+          <img src="./letters/empty.gif">
+        </div>
+        <div id="noscriptatall"> <!-- Loading/noscript warning screen -->
+          <p>This shouldn't take too long to load. Unless your Javascript is off. Then it wouldn't be loading at all right now. Please, enable that if nothing is working.</p>
+          <p class="meow">:3</p>
+        </div>
+        <div id="heywarning" style="display: none;"> <!-- Content warning screen -->
+          <img src="./warning.gif"> <br>
+          <h1>Hey,</h1>
+          <p>just wanted to let you know that this game may contain content that may be disturbing or triggering to some. Stuff like dead zombified cartoon kittens, an actual noose... All that scary whatever 70's horror stuff. Not sure who would get too offended by that but still, viewer discretion is advised.</p>
+          <p>That being said, the story goes like this: the devil™, bored, decided to force his dead cat zombie things to play good old Hangman with him. He makes the player (you!) guess the phrase correctly, and if the player (still you) fails, the cat will have to go through the torment... Well, more like slight annoyance of being hanged. It's more of an average Saturday night for them anyways. Okay, have fuun!~ :3 (as if you're gonna have fun playing hangman, maybe for a few minutes at most, hah)</p>
+          <button onclick="titlescr()">I suppose I understand</button>
+        </div>
+        <div id="titlescreen" style="display: none;"> <!-- Title screen -->
+          <img src="title.gif" usemap="#image-map" id="holyMoly">
+
+          <map name="image-map">
+          <area target="_self" onclick="start()"
+
+          onmouseover="titleScreen.style.cursor ='pointer'"
+          onmouseout="titleScreen.style.cursor ='default'"
+          
+          coords="217,263,244,345,59,399,21,291,123,269" shape="poly">
+          </map>
+        </div>
+        <div id="game" style="display: none;"> <!-- The game itself -->
+          <div id="topRow">
+            <div id="catNoose">
+              <img id="theNoose" src="./hang/6.gif"> <!-- The cats and the noose, visual assets. -->
+            </div>
+            <div id="theLetterz"></div> <!-- The word the player is currently guessing. -->
+          </div>
+          <div id="bottomRow">
+            <div id="lettersUsed">
+              <p id="myLetterz" style="margin: 0;"></p> <!-- Letters the player has already guessed. -->
+            </div>
+            <div id="keyboard"></div>
+          </div>
+          <div id="uhhyeahthis" style="display:none;"> <!-- This contains the status/final result box-->
+           <div id="status"> <!-- The status/final result box -->
+              <p id="winrar" style="display:none;">You did well enough! Looks like this fella won't have to get completely hanged again this time.</p>
+              <p id="loserar" style="display: none;">Ope, there they go. That's fine, you don't have to be hard on yourself, this is just another Saturday night for them anyways. Your word was:</p>
+              <p id="thewordwas"></p>
+              <button onclick="reset()">Again!</button>
+            </div>
+          </div>
+          <div id="ughfineiguessyouar"></div>
+          <!-- ^ This exists so images in the top row aren't grabable and the already guessed letters aren't selectable. This gives the game a generally more professional look. -->
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
