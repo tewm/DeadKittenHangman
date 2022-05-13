@@ -6,7 +6,7 @@
     <script>        // This code was written by Thomas F. of Programming. No engines were used, this is purely hand-coded.
         var words = ["calcium oxide", "adam sandler", "death squad", "explosive", "cherry bomb", "schooly d", "plundephonics", "suffering", "sound collage", "existentialism", "john doe", "heterochromia", "power tools", "breakcore", "script", "psychedelic", "saxophone", "dracula", "lucifer", "custody battle", "divorce", "floaties", "legit medical business", "cyanide", "rob zombie", "antiques", "matsushita", "rca technologies", "thinkpad", "meatwad no", "cat", "fred durst", "weezer", "clean bathroom", "neon genesis evangelion", "illegal animal hunting", "dog", "biggie smalls", "free healthcare", "canada", "barack obama", "connecticut public television", "the military", "subliminal advertising", "thomas hates mcdonalds", "hippopotomonstrosesquippedaliophobia", "joe biden hotdog", "the gerigerogegege", "rivers cuomo", "father", "evil blood sacrifice", "screaming bloody murder", "row", "vertigo"];
 
-        // ^ Just a bunch of dumb terms I thought, mostly either references to things I like or stuff only internet stoners or I would find funny. Special thanks to S and J for giving me some term ideas.
+        // ^ Just a bunch of dumb terms I thought, mostly either references to things I like or stuff only I would find funny. Special thanks to S and J for giving me some term ideas.
 
         function allLoaded() {
           document.getElementById("noscriptatall").style.display = "none";
@@ -42,7 +42,7 @@
           titleScreen.style.animationPlayState = "running"; // this makes the animation play.
         }
 
-		    function start() {
+        function start() {
           titleScreen.style.animationName = "fadeOut";
           titleScreen.style.animationPlayState = "running";
 
@@ -55,7 +55,7 @@
           window.fadedeeznuts = setInterval(startfr, 600);
 
           // ^ Best way to allow for a delay. As far as I'm aware, there is no "wait()" function, so I just use this. What sucks is that I have to segregate it to another function and that it constantly loops. This line in specific is meant to allow for the fade-out transition to play.
-		    }
+        }
 
         function startfr() {
           document.getElementById("titlescreen").style.display = "none";
@@ -69,7 +69,7 @@
           keyboardGenerate(); // Nope, the keyboard isn't manual HTML work. Just sounds like too much work.
           reset();
         }
-		      
+          
         function keyboardGenerate() {
           var keyboardkeys = "qwertyuiopasdfghjklzxcvbnm"; 
           var keyboardarray = keyboardkeys.split("");
@@ -350,9 +350,9 @@
         }
 
         #ughfineiguessyouar {
+          width: 650px;
           height: 225px;
-          position: relative;
-          top: -400px;
+          position: absolute;
         }
     </style>
   </head>
@@ -421,6 +421,10 @@
           </map>
         </div>
         <div id="game" style="display: none;"> <!-- The game itself -->
+          <div id="ughfineiguessyouar"></div>
+          
+          <!-- ^ This exists so images in the top row aren't grabable and the already guessed letters aren't selectable. This gives the game a generally more professional look. -->
+          
           <div id="topRow">
             <div id="catNoose">
               <img id="theNoose" src="./hang/6.gif"> <!-- The cats and the noose, visual assets. -->
@@ -441,8 +445,6 @@
               <button onclick="reset()">Again!</button>
             </div>
           </div>
-          <div id="ughfineiguessyouar"></div>
-          <!-- ^ This exists so images in the top row aren't grabable and the already guessed letters aren't selectable. This gives the game a generally more professional look. -->
         </div>
       </div>
     </div>
